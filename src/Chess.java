@@ -13,6 +13,7 @@ public class Chess {
     boolean whiteTurn = true; // White starts the game
     boolean gameOver = false;
     JLabel turnLabel;
+ChessBot bot;
 
 
 
@@ -415,7 +416,14 @@ if ("♚".equals(selectedPiece)) {
 
             
             whiteTurn = !whiteTurn;
-            updateTurnLabel();
+            
+            if (!whiteTurn) {
+                
+    SwingUtilities.invokeLater(() -> bot.makeRandomMove());
+}
+
+            
+
 
 
             // Reset selection
@@ -501,6 +509,20 @@ if ("♚".equals(selectedPiece)) {
         }
     }
 
+public void makeBotMove(ChessBot.Move move) {
+    try { Thread.sleep(1000); } catch (InterruptedException e) {}
+    String piece = coins[move.fromRow][move.fromCol];
+
+    coins[move.toRow][move.toCol] = piece;
+    coins[move.fromRow][move.fromCol] = null;
+
+    cells[move.toRow][move.toCol].setText(piece);
+    cells[move.fromRow][move.fromCol].setText("");
+    cells[move.fromRow][move.fromCol].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+    whiteTurn = true;
+    updateTurnLabel();
+}
 
 
     // /////////////////////// Constructor chess//////////////////////////////////
@@ -539,6 +561,9 @@ jf.add(turnLabel);
         initializeCoins();
         ShowCoins();
         updateTurnLabel();
+        try { Thread.sleep(1000); } catch (InterruptedException e) {}
+        bot = new ChessBot(this);
+
 
 
 
