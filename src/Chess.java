@@ -432,6 +432,21 @@ if ("♚".equals(selectedPiece)) {
         }
     }
 
+    public void makeBotMove(Move move) {
+    try { Thread.sleep(1000); } catch (InterruptedException e) {}
+    String piece = coins[move.fromRow][move.fromCol];
+
+    coins[move.toRow][move.toCol] = piece;
+    coins[move.fromRow][move.fromCol] = null;
+
+    cells[move.toRow][move.toCol].setText(piece);
+    cells[move.fromRow][move.fromCol].setText("");
+    cells[move.fromRow][move.fromCol].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+    whiteTurn = true;
+    updateTurnLabel();
+}
+
 // ///////////////////////////// Creating Each chess cells/////////////////////////
     public JLabel createLabel(int x, int y, Color color, JFrame frame,int row, int col) {
         JLabel label = new JLabel();
@@ -509,20 +524,7 @@ if ("♚".equals(selectedPiece)) {
         }
     }
 
-public void makeBotMove(ChessBot.Move move) {
-    try { Thread.sleep(1000); } catch (InterruptedException e) {}
-    String piece = coins[move.fromRow][move.fromCol];
 
-    coins[move.toRow][move.toCol] = piece;
-    coins[move.fromRow][move.fromCol] = null;
-
-    cells[move.toRow][move.toCol].setText(piece);
-    cells[move.fromRow][move.fromCol].setText("");
-    cells[move.fromRow][move.fromCol].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-    whiteTurn = true;
-    updateTurnLabel();
-}
 
 
     // /////////////////////// Constructor chess//////////////////////////////////
