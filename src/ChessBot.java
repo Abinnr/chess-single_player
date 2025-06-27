@@ -1,6 +1,6 @@
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
+//import Move;
 
 public class ChessBot {
     private Chess game; // Reference to the Chess game
@@ -45,18 +45,7 @@ public class ChessBot {
 
         if (!legalMoves.isEmpty()) {
             Move chosen = legalMoves.get(new Random().nextInt(legalMoves.size()));
-            game.makeBotMove(chosen);
-        }
-    }
-
-    // Inner class to represent a move
-    class Move {
-        int fromRow, fromCol, toRow, toCol;
-        Move(int fr, int fc, int tr, int tc) {
-            fromRow = fr;
-            fromCol = fc;
-            toRow = tr;
-            toCol = tc;
+            game.makeBotMove(chosen); // Call method in Chess.java to execute the bot's move
         }
     }
 }
