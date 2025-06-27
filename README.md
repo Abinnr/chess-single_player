@@ -1,7 +1,7 @@
-# Chess Multiplayer Game (Java Swing)
+# Chess Singleplayer Game (Java Swing)
 > Chess is the gymnasium of the mind. Keep building, keep growing. ♛
 
-## Welcome to the Java-based Chess Multiplayer Game! ♟️ 
+## Welcome to the Java-based Chess Singleplayer Game! ♟️ 
 This project is a desktop application built using **Java Swing** that allows two players to play chess on a fully functional GUI board.
 
 ## 🎯 Features
@@ -28,7 +28,7 @@ This project is a desktop application built using **Java Swing** that allows two
 1. **Clone the Repository**:
 
 ```bash
-https://github.com/your-username/java-chess-multi_player.git
+https://github.com/your-username/java-chess-single_player.git
 ```
 
 2. **Open the Project** in your preferred IDE.
@@ -40,6 +40,8 @@ https://github.com/your-username/java-chess-multi_player.git
 
 
 ## 📸 Screenshots
+![Screenshot 2025-06-27 132010](https://github.com/user-attachments/assets/3358978c-c45b-4e35-9db6-258acf4c51da)
+
 
 
 
