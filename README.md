@@ -40,7 +40,8 @@ https://github.com/your-username/java-chess-single_player.git
 
 
 ## 📸 Screenshots
-![Screenshot 2025-06-27 132010](https://github.com/user-attachments/assets/3358978c-c45b-4e35-9db6-258acf4c51da)
+![Screenshot 2025-06-29 024744](https://github.com/user-attachments/assets/2c302693-80e3-4146-ab47-ffc4a962161a)
+
 
 
 
