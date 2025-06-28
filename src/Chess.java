@@ -622,13 +622,14 @@ jf.add(turnLabel);
             for (int col = 0; col < 8; col++) {
                 int x = col * 50;
                 int y = yPos[row];
-                if(row % 2 == 0) {
-                    Color color = (col % 2 == 0) ? Color.DARK_GRAY : Color.LIGHT_GRAY;
-                    cells[row][col] = createLabel(x, y, color, jf,row,col);
-                }else{
-                    Color color = (col % 2 == 0) ? Color.LIGHT_GRAY:Color.DARK_GRAY ;
-                    cells[row][col] = createLabel(x, y, color, jf,row,col);
-                }
+                if (row % 2 == 0) {
+    Color color = (col % 2 == 0) ? new Color(102, 51, 0) : new Color(255, 223, 100);
+    cells[row][col] = createLabel(x, y, color, jf, row, col);
+} else {
+    Color color = (col % 2 == 0) ? new Color(255, 223, 100) : new Color(102, 51, 0);
+    cells[row][col] = createLabel(x, y, color, jf, row, col);
+}
+
             }
         }
         initializeCoins();
