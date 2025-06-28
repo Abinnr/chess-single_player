@@ -48,4 +48,61 @@ public class ChessBot {
             game.makeBotMove(chosen); // Call method in Chess.java to execute the bot's move
         }
     }
+    
+
+    // ////////////////////////////////////
+    public Move getBestMove(Board board, int depth, boolean maximizingPlayer) {
+    ArrayList<Move> legalMoves = board.getAllLegalMoves();
+
+    Move bestMove = null;
+    int bestScore = maximizingPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
+    for (Move move : legalMoves) {
+        Board simulated = board.makeMove(move);
+        int score = minimax(simulated, depth - 1, !maximizingPlayer);
+
+        if (maximizingPlayer && score > bestScore) {
+            bestScore = score;
+            bestMove = move;
+        } else if (!maximizingPlayer && score < bestScore) {
+            bestScore = score;
+            bestMove = move;
+        }
+    }
+
+    return bestMove;
+}
+
+public int minimax(Board board, int depth, boolean maximizingPlayer) {
+    if (depth == 0) return board.evaluate();
+
+    ArrayList<Move> legalMoves = board.getAllLegalMoves();
+    if (legalMoves.isEmpty()) return board.evaluate();
+
+    int bestScore = maximizingPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
+    for (Move move : legalMoves) {
+        Board simulated = board.makeMove(move);
+        int score = minimax(simulated, depth - 1, !maximizingPlayer);
+
+        if (maximizingPlayer) {
+            bestScore = Math.max(bestScore, score);
+        } else {
+            bestScore = Math.min(bestScore, score);
+        }
+    }
+
+    return bestScore;
+}
+
+public void makeSmartMove() {
+    Board board = new Board(game.coins, false); // black bot turn
+    Move bestMove = getBestMove(board, 2, false); // depth 2 for now
+
+    if (bestMove != null) {
+        game.makeBotMove(bestMove);
+    }
+}
+
+
 }

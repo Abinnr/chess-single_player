@@ -84,7 +84,7 @@ public void updateTurnLabel() {
         String targetPiece=coins[toRow][toCol];
 
         boolean isLShape=((rowDiff==2&& colDiff==1)||(rowDiff==1&& colDiff==2));
-        return isLShape && (targetPiece ==null || isSameTeam(targetPiece,piece));// target should be L-shape. move to empty cell or capture opponent(not same team).
+        return isLShape && (targetPiece ==null || !isSameTeam(targetPiece,piece));// target should be L-shape. move to empty cell or capture opponent(not same team).
     }
 
 
@@ -162,6 +162,68 @@ public boolean isLegalKingMove(int fromRow, int fromCol, int toRow, int toCol, S
     return false;
 }
 
+// ////////////////////////////// static moves
+public static boolean isLegalPawnMoveStatic(String[][] coins, int fromRow, int fromCol, int toRow, int toCol, String piece) {
+    int direction = "♙".equals(piece) ? -1 : 1;
+    int startRow = "♙".equals(piece) ? 6 : 1;
+    String dest = coins[toRow][toCol];
+
+    if (fromCol == toCol && toRow == fromRow + direction && dest == null) return true;
+    if (fromCol == toCol && fromRow == startRow && toRow == fromRow + 2 * direction && dest == null && coins[fromRow + direction][fromCol] == null) return true;
+    if (Math.abs(toCol - fromCol) == 1 && toRow == fromRow + direction && dest != null &&
+        !isSameTeamStatic(piece, dest)) return true;
+
+    return false;
+}
+
+public static boolean isLegalKnightMoveStatic(String[][] coins, int fromRow, int fromCol, int toRow, int toCol, String piece) {
+    int rowDiff = Math.abs(fromRow - toRow), colDiff = Math.abs(fromCol - toCol);
+    String dest = coins[toRow][toCol];
+    return ((rowDiff == 2 && colDiff == 1) || (rowDiff == 1 && colDiff == 2)) &&
+           (dest == null || !isSameTeamStatic(piece, dest));
+}
+
+public static boolean isLegalBishopMoveStatic(String[][] coins, int fromRow, int fromCol, int toRow, int toCol, String piece) {
+    if (Math.abs(fromRow - toRow) != Math.abs(fromCol - toCol)) return false;
+    int rowDir = Integer.compare(toRow, fromRow), colDir = Integer.compare(toCol, fromCol);
+    int r = fromRow + rowDir, c = fromCol + colDir;
+    while (r != toRow || c != toCol) {
+        if (coins[r][c] != null) return false;
+        r += rowDir; c += colDir;
+    }
+    String dest = coins[toRow][toCol];
+    return dest == null || !isSameTeamStatic(piece, dest);
+}
+
+public static boolean isLegalRookMoveStatic(String[][] coins, int fromRow, int fromCol, int toRow, int toCol, String piece) {
+    if (fromRow != toRow && fromCol != toCol) return false;
+    int rowDir = Integer.compare(toRow, fromRow), colDir = Integer.compare(toCol, fromCol);
+    int r = fromRow + rowDir, c = fromCol + colDir;
+    while (r != toRow || c != toCol) {
+        if (coins[r][c] != null) return false;
+        r += rowDir; c += colDir;
+    }
+    String dest = coins[toRow][toCol];
+    return dest == null || !isSameTeamStatic(piece, dest);
+}
+
+public static boolean isLegalQueenMoveStatic(String[][] coins, int fromRow, int fromCol, int toRow, int toCol, String piece) {
+    return isLegalBishopMoveStatic(coins, fromRow, fromCol, toRow, toCol, piece) ||
+           isLegalRookMoveStatic(coins, fromRow, fromCol, toRow, toCol, piece);
+}
+
+public static boolean isLegalKingMoveStatic(String[][] coins, int fromRow, int fromCol, int toRow, int toCol, String piece) {
+    int rowDiff = Math.abs(toRow - fromRow), colDiff = Math.abs(toCol - fromCol);
+    String dest = coins[toRow][toCol];
+    return rowDiff <= 1 && colDiff <= 1 && (dest == null || !isSameTeamStatic(piece, dest));
+}
+
+public static boolean isSameTeamStatic(String a, String b) {
+    return ("♖♘♗♕♔♙".contains(a) && "♖♘♗♕♔♙".contains(b)) || ("♜♞♝♛♚♟".contains(a) && "♜♞♝♛♚♟".contains(b));
+}
+
+
+// ///////////////////////////////////
 
 public void restartGame() {
     selectedRow = -1;
@@ -182,7 +244,7 @@ public void restartGame() {
     ShowCoins();
 }
 
-
+// ///////////////////////////////
         public Point findKingPosition(boolean isWhiteKing) {
     String king = isWhiteKing ? "♔" : "♚";
 
@@ -232,6 +294,8 @@ public boolean isKingInCheck(boolean whiteKing) {
 
     return false;
 }
+// ///////////////////////////////
+
 
 public void clearHighlights() {
     for (Point p : highlightedMoves) {
@@ -372,7 +436,7 @@ if (!isCurrentPlayersPiece(piece)) {
             if (selectedPiece.equals("♔") || selectedPiece.equals("♚")) {
                 if (!isLegalKingMove(selectedRow, selectedCol, row, col, selectedPiece)) {
                     JOptionPane.showMessageDialog(jf,
-                            "Illegal queen move !",
+                            "Illegal king move !",
                             "Can't play",
                             JOptionPane.WARNING_MESSAGE);
                     return;
@@ -419,7 +483,8 @@ if ("♚".equals(selectedPiece)) {
             
             if (!whiteTurn) {
                 
-    SwingUtilities.invokeLater(() -> bot.makeRandomMove());
+    SwingUtilities.invokeLater(() -> bot.makeSmartMove());
+
 }
 
             
@@ -433,19 +498,23 @@ if ("♚".equals(selectedPiece)) {
     }
 
     public void makeBotMove(Move move) {
-    try { Thread.sleep(1000); } catch (InterruptedException e) {}
-    String piece = coins[move.fromRow][move.fromCol];
+    int fromRow = move.fromRow;
+    int fromCol = move.fromCol;
+    int toRow = move.toRow;
+    int toCol = move.toCol;
+    String piece = coins[fromRow][fromCol];
 
-    coins[move.toRow][move.toCol] = piece;
-    coins[move.fromRow][move.fromCol] = null;
+    coins[toRow][toCol] = piece;
+    coins[fromRow][fromCol] = null;
 
-    cells[move.toRow][move.toCol].setText(piece);
-    cells[move.fromRow][move.fromCol].setText("");
-    cells[move.fromRow][move.fromCol].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    cells[toRow][toCol].setText(piece);
+    cells[fromRow][fromCol].setText("");
+    cells[fromRow][fromCol].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-    whiteTurn = true;
+    whiteTurn = true; // Give turn back to player after bot move
     updateTurnLabel();
 }
+
 
 // ///////////////////////////// Creating Each chess cells/////////////////////////
     public JLabel createLabel(int x, int y, Color color, JFrame frame,int row, int col) {
