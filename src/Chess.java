@@ -446,18 +446,20 @@ if (!isCurrentPlayersPiece(piece)) {
 
             // Check if the target cell contains a king coin (either black or white)
             // If so, declare the winner and end the game
-            if ("♔".equals(selectedPiece)) {
+            //  Check if move captures a king
+if ("♔".equals(coins[row][col])) {
     JOptionPane.showMessageDialog(jf, "Black wins! ♚🏆\nStarting a new game...");
-    try { Thread.sleep(1000); } catch (InterruptedException e) {}// Restart the game after a short delay
+    try { Thread.sleep(1000); } catch (InterruptedException e) {}
     restartGame();
     return;
 }
-if ("♚".equals(selectedPiece)) {
+if ("♚".equals(coins[row][col])) {
     JOptionPane.showMessageDialog(jf, "White wins! ♔🏆\nStarting a new game...");
-    try { Thread.sleep(1000); } catch (InterruptedException e) {}// Restart the game after a short delay
-    restartGame();//
+    try { Thread.sleep(1000); } catch (InterruptedException e) {}
+    restartGame();
     return;
 }
+
 
 
             // ////////////moving the selected coin to other cell
