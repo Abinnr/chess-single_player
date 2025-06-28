@@ -84,7 +84,7 @@ public void updateTurnLabel() {
         String targetPiece=coins[toRow][toCol];
 
         boolean isLShape=((rowDiff==2&& colDiff==1)||(rowDiff==1&& colDiff==2));
-        return isLShape && (targetPiece ==null || isSameTeam(targetPiece,piece));// target should be L-shape. move to empty cell or capture opponent(not same team).
+        return isLShape && (targetPiece ==null || !isSameTeam(targetPiece,piece));// target should be L-shape. move to empty cell or capture opponent(not same team).
     }
 
 
@@ -372,7 +372,7 @@ if (!isCurrentPlayersPiece(piece)) {
             if (selectedPiece.equals("♔") || selectedPiece.equals("♚")) {
                 if (!isLegalKingMove(selectedRow, selectedCol, row, col, selectedPiece)) {
                     JOptionPane.showMessageDialog(jf,
-                            "Illegal queen move !",
+                            "Illegal king move !",
                             "Can't play",
                             JOptionPane.WARNING_MESSAGE);
                     return;
@@ -433,19 +433,23 @@ if ("♚".equals(selectedPiece)) {
     }
 
     public void makeBotMove(Move move) {
-    try { Thread.sleep(1000); } catch (InterruptedException e) {}
-    String piece = coins[move.fromRow][move.fromCol];
+    int fromRow = move.fromRow;
+    int fromCol = move.fromCol;
+    int toRow = move.toRow;
+    int toCol = move.toCol;
+    String piece = coins[fromRow][fromCol];
 
-    coins[move.toRow][move.toCol] = piece;
-    coins[move.fromRow][move.fromCol] = null;
+    coins[toRow][toCol] = piece;
+    coins[fromRow][fromCol] = null;
 
-    cells[move.toRow][move.toCol].setText(piece);
-    cells[move.fromRow][move.fromCol].setText("");
-    cells[move.fromRow][move.fromCol].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    cells[toRow][toCol].setText(piece);
+    cells[fromRow][fromCol].setText("");
+    cells[fromRow][fromCol].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-    whiteTurn = true;
+    whiteTurn = true; // Give turn back to player after bot move
     updateTurnLabel();
 }
+
 
 // ///////////////////////////// Creating Each chess cells/////////////////////////
     public JLabel createLabel(int x, int y, Color color, JFrame frame,int row, int col) {
