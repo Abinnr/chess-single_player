@@ -623,10 +623,10 @@ jf.add(turnLabel);
                 int x = col * 50;
                 int y = yPos[row];
                 if (row % 2 == 0) {
-    Color color = (col % 2 == 0) ? new Color(102, 51, 0) : new Color(255, 223, 100);
+    Color color = (col % 2 == 0) ? new Color(102, 51, 0) : new Color(240, 210, 90) ;
     cells[row][col] = createLabel(x, y, color, jf, row, col);
 } else {
-    Color color = (col % 2 == 0) ? new Color(255, 223, 100) : new Color(102, 51, 0);
+    Color color = (col % 2 == 0) ? new Color(240, 210, 90)  : new Color(102, 51, 0);
     cells[row][col] = createLabel(x, y, color, jf, row, col);
 }
 
