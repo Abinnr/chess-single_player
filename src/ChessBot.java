@@ -97,7 +97,7 @@ public int minimax(Board board, int depth, boolean maximizingPlayer) {
 
 public void makeSmartMove() {
     Board board = new Board(game.coins, false); // black bot turn
-    Move bestMove = getBestMove(board, 2, false); // depth 2 for now
+    Move bestMove = getBestMove(board, 3, false); // depth 2 for now
 
     if (bestMove != null) {
         game.makeBotMove(bestMove);

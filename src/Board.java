@@ -76,28 +76,47 @@ public class Board {
     }
 
     public int evaluate() {
-        int score = 0;
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
-                String piece = coins[r][c];
-                if (piece == null) continue;
+    int[][] pawnEval = {
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {5, 5, 5, -5, -5, 5, 5, 5},
+        {1, 1, 2, 3, 3, 2, 1, 1},
+        {0.5, 0.5, 1, 2.5, 2.5, 1, 0.5, 0.5},
+        {0, 0, 0, 2, 2, 0, 0, 0},
+        {0.5, -0.5, -1, 0, 0, -1, -0.5, 0.5},
+        {0.5, 1, 1, -2, -2, 1, 1, 0.5},
+        {0, 0, 0, 0, 0, 0, 0, 0}
+    };
 
-                int value = 0;
-                switch (piece) {
-                    case "♙": case "♟": value = 10; break;
-                    case "♘": case "♞": value = 30; break;
-                    case "♗": case "♝": value = 30; break;
-                    case "♖": case "♜": value = 50; break;
-                    case "♕": case "♛": value = 90; break;
-                    case "♔": case "♚": value = 900; break;
-                }
+    int score = 0;
+    for (int r = 0; r < 8; r++) {
+        for (int c = 0; c < 8; c++) {
+            String piece = board[r][c];
+            if (piece == null) continue;
 
-                if (isWhite(piece)) score += value;
-                else score -= value;
+            int value = 0;
+            switch (piece) {
+                case "♙": value = 10 + (int)pawnEval[r][c]; break;
+                case "♘": value = 30; break;
+                case "♗": value = 30; break;
+                case "♖": value = 50; break;
+                case "♕": value = 90; break;
+                case "♔": value = 900; break;
+
+                case "♟": value = -(10 + (int)pawnEval[7 - r][c]); break;
+                case "♞": value = -30; break;
+                case "♝": value = -30; break;
+                case "♜": value = -50; break;
+                case "♛": value = -90; break;
+                case "♚": value = -900; break;
             }
+
+            score += value;
         }
-        return score;
     }
+
+    return score;
+}
+
 
     public boolean isWhite(String piece) {
         return piece != null && "♖♘♗♕♔♙".contains(piece);
