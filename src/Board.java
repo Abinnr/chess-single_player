@@ -76,7 +76,7 @@ public class Board {
     }
 
     public int evaluate() {
-    int[][] pawnEval = {
+    double[][] pawnEval = {
         {0, 0, 0, 0, 0, 0, 0, 0},
         {5, 5, 5, -5, -5, 5, 5, 5},
         {1, 1, 2, 3, 3, 2, 1, 1},
@@ -90,7 +90,7 @@ public class Board {
     int score = 0;
     for (int r = 0; r < 8; r++) {
         for (int c = 0; c < 8; c++) {
-            String piece = board[r][c];
+            String piece = coins[r][c];
             if (piece == null) continue;
 
             int value = 0;
