@@ -5,6 +5,7 @@ public class Board {
 
     public String[][] coins; // 8x8 chessboard
     public boolean isWhiteTurn;
+    List<Move> history = new ArrayList<>();
 
     public Board(String[][] coins, boolean isWhiteTurn) {
         this.coins = new String[8][8];
@@ -67,12 +68,22 @@ public class Board {
     public Board makeMove(Move move) {
         Board newBoard = new Board(this);
 
+        newBoard.history.addAll(this.history);
+        newBoard.history.add(move);
         String piece = newBoard.coins[move.fromRow][move.fromCol];
         newBoard.coins[move.toRow][move.toCol] = piece;
         newBoard.coins[move.fromRow][move.fromCol] = null;
         newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 
         return newBoard;
+    }
+
+    public boolean isRepetitive(Move move) {
+        int count = 0;
+        for (int i = history.size() - 4; i >= 0 && count < 4; i--) {
+            if (history.get(i).equals(move)) count++;
+        }
+        return count >= 2;
     }
 
     public int evaluate() {

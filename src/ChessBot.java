@@ -54,10 +54,16 @@ public class ChessBot {
     public Move getBestMove(Board board, int depth, boolean maximizingPlayer) {
     ArrayList<Move> legalMoves = board.getAllLegalMoves();
 
+
+    
     Move bestMove = null;
     int bestScore = maximizingPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
+
+    
     for (Move move : legalMoves) {
+        if (board.isRepetitive(move)) continue;
+        
         Board simulated = board.makeMove(move);
         int score = minimax(simulated, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, !maximizingPlayer);
 
