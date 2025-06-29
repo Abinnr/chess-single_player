@@ -54,12 +54,19 @@ public class ChessBot {
     public Move getBestMove(Board board, int depth, boolean maximizingPlayer) {
     ArrayList<Move> legalMoves = board.getAllLegalMoves();
 
+
+    
     Move bestMove = null;
     int bestScore = maximizingPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
+
+    
     for (Move move : legalMoves) {
+        if (board.isRepetitive(move)) continue;
+        
         Board simulated = board.makeMove(move);
-        int score = minimax(simulated, depth - 1, !maximizingPlayer);
+        int score = minimax(simulated, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, !maximizingPlayer);
+
 
         if (maximizingPlayer && score > bestScore) {
             bestScore = score;
@@ -73,31 +80,39 @@ public class ChessBot {
     return bestMove;
 }
 
-public int minimax(Board board, int depth, boolean maximizingPlayer) {
+public int minimax(Board board, int depth, int alpha, int beta, boolean maximizingPlayer) {
     if (depth == 0) return board.evaluate();
 
     ArrayList<Move> legalMoves = board.getAllLegalMoves();
     if (legalMoves.isEmpty()) return board.evaluate();
 
-    int bestScore = maximizingPlayer ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-
-    for (Move move : legalMoves) {
-        Board simulated = board.makeMove(move);
-        int score = minimax(simulated, depth - 1, !maximizingPlayer);
-
-        if (maximizingPlayer) {
-            bestScore = Math.max(bestScore, score);
-        } else {
-            bestScore = Math.min(bestScore, score);
+    if (maximizingPlayer) {
+        int maxEval = Integer.MIN_VALUE;
+        for (Move move : legalMoves) {
+            Board simulated = board.makeMove(move);
+            int eval = minimax(simulated, depth - 1, alpha, beta, false);
+            maxEval = Math.max(maxEval, eval);
+            alpha = Math.max(alpha, eval);
+            if (beta <= alpha) break; // β cut-off
         }
+        return maxEval;
+    } else {
+        int minEval = Integer.MAX_VALUE;
+        for (Move move : legalMoves) {
+            Board simulated = board.makeMove(move);
+            int eval = minimax(simulated, depth - 1, alpha, beta, true);
+            minEval = Math.min(minEval, eval);
+            beta = Math.min(beta, eval);
+            if (beta <= alpha) break; // α cut-off
+        }
+        return minEval;
     }
-
-    return bestScore;
 }
+
 
 public void makeSmartMove() {
     Board board = new Board(game.coins, false); // black bot turn
-    Move bestMove = getBestMove(board, 2, false); // depth 2 for now
+    Move bestMove = getBestMove(board, 3, false); // depth 2 for now
 
     if (bestMove != null) {
         game.makeBotMove(bestMove);
