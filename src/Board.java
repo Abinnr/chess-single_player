@@ -20,6 +20,25 @@ public class Board {
         this(other.coins, other.isWhiteTurn);
     }
 
+    public String getPieceAt(int row, int col) {
+    return coins[row][col];
+}
+
+public int pieceValue(String piece) {
+    if (piece == null) return 0;
+
+    switch (piece) {
+        case "♙": case "♟": return 10;
+        case "♘": case "♞": return 30;
+        case "♗": case "♝": return 30;
+        case "♖": case "♜": return 50;
+        case "♕": case "♛": return 90;
+        case "♔": case "♚": return 900;
+        default: return 0;
+    }
+}
+
+
     public List<Move> getAllLegalMoves(boolean forWhite) {
         List<Move> moves = new ArrayList<>();
 
@@ -68,11 +87,20 @@ public class Board {
     public Board makeMove(Move move) {
         Board newBoard = new Board(this);
 
+        
         newBoard.history.addAll(this.history);
         newBoard.history.add(move);
         String piece = newBoard.coins[move.fromRow][move.fromCol];
         newBoard.coins[move.toRow][move.toCol] = piece;
         newBoard.coins[move.fromRow][move.fromCol] = null;
+
+        // CHECK FOR POWN PROMOTION
+        if ("♙".equals(piece) && move.toRow == 0) {
+        newBoard.coins[move.toRow][move.toCol] = "♕"; // promote to white queen
+    } else if ("♟".equals(piece) && move.toRow == 7) {
+        newBoard.coins[move.toRow][move.toCol] = "♛"; // promote to black queen
+    }
+
         newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 
         return newBoard;
@@ -86,18 +114,76 @@ public class Board {
         return count >= 2;
     }
 
-    public int evaluate() {
-    double[][] pawnEval = {
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {5, 5, 5, -5, -5, 5, 5, 5},
-        {1, 1, 2, 3, 3, 2, 1, 1},
-        {0.5, 0.5, 1, 2.5, 2.5, 1, 0.5, 0.5},
-        {0, 0, 0, 2, 2, 0, 0, 0},
-        {0.5, -0.5, -1, 0, 0, -1, -0.5, 0.5},
-        {0.5, 1, 1, -2, -2, 1, 1, 0.5},
-        {0, 0, 0, 0, 0, 0, 0, 0}
-    };
+    private static final double[][] PAWN_TABLE = {
+    { 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 5, 5, 5, -5, -5, 5, 5, 5 },
+    { 1, 1, 2, 3, 3, 2, 1, 1 },
+    { 0.5, 0.5, 1, 2.5, 2.5, 1, 0.5, 0.5 },
+    { 0, 0, 0, 2, 2, 0, 0, 0 },
+    { 0.5, -0.5, -1, 0, 0, -1, -0.5, 0.5 },
+    { 0.5, 1, 1, -2, -2, 1, 1, 0.5 },
+    { 0, 0, 0, 0, 0, 0, 0, 0 }
+};
 
+private static final double[][] KNIGHT_TABLE = {
+    {-5, -4, -3, -3, -3, -3, -4, -5},
+    {-4, -2, 0, 0, 0, 0, -2, -4},
+    {-3, 0, 1, 1.5, 1.5, 1, 0, -3},
+    {-3, 0.5, 1.5, 2, 2, 1.5, 0.5, -3},
+    {-3, 0, 1.5, 2, 2, 1.5, 0, -3},
+    {-3, 0.5, 1, 1.5, 1.5, 1, 0.5, -3},
+    {-4, -2, 0, 0.5, 0.5, 0, -2, -4},
+    {-5, -4, -3, -3, -3, -3, -4, -5}
+};
+
+private static final double[][] BISHOP_TABLE = {
+    {-2, -1, -1, -1, -1, -1, -1, -2},
+    {-1, 0, 0, 0, 0, 0, 0, -1},
+    {-1, 0, 0.5, 1, 1, 0.5, 0, -1},
+    {-1, 0.5, 0.5, 1, 1, 0.5, 0.5, -1},
+    {-1, 0, 1, 1, 1, 1, 0, -1},
+    {-1, 1, 1, 1, 1, 1, 1, -1},
+    {-1, 0.5, 0, 0, 0, 0, 0.5, -1},
+    {-2, -1, -1, -1, -1, -1, -1, -2}
+};
+
+private static final double[][] ROOK_TABLE = {
+    {0, 0, 0, 0.5, 0.5, 0, 0, 0},
+    {-0.5, 0, 0, 0, 0, 0, 0, -0.5},
+    {-0.5, 0, 0, 0, 0, 0, 0, -0.5},
+    {-0.5, 0, 0, 0, 0, 0, 0, -0.5},
+    {-0.5, 0, 0, 0, 0, 0, 0, -0.5},
+    {-0.5, 0, 0, 0, 0, 0, 0, -0.5},
+    {0.5, 1, 1, 1, 1, 1, 1, 0.5},
+    {0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+private static final double[][] QUEEN_TABLE = {
+    {-2, -1, -1, -0.5, -0.5, -1, -1, -2},
+    {-1, 0, 0, 0, 0, 0, 0, -1},
+    {-1, 0, 0.5, 0.5, 0.5, 0.5, 0, -1},
+    {-0.5, 0, 0.5, 0.5, 0.5, 0.5, 0, -0.5},
+    {0, 0, 0.5, 0.5, 0.5, 0.5, 0, -0.5},
+    {-1, 0.5, 0.5, 0.5, 0.5, 0.5, 0, -1},
+    {-1, 0, 0.5, 0, 0, 0, 0, -1},
+    {-2, -1, -1, -0.5, -0.5, -1, -1, -2}
+};
+
+private static final double[][] KING_TABLE = {
+    {-3, -4, -4, -5, -5, -4, -4, -3},
+    {-3, -4, -4, -5, -5, -4, -4, -3},
+    {-3, -4, -4, -5, -5, -4, -4, -3},
+    {-3, -4, -4, -5, -5, -4, -4, -3},
+    {-2, -3, -3, -4, -4, -3, -3, -2},
+    {-1, -2, -2, -2, -2, -2, -2, -1},
+    {2, 2, 0, 0, 0, 0, 2, 2},
+    {2, 3, 1, 0, 0, 1, 3, 2}
+};
+
+
+
+
+    public int evaluate() {
     int score = 0;
     for (int r = 0; r < 8; r++) {
         for (int c = 0; c < 8; c++) {
@@ -105,28 +191,67 @@ public class Board {
             if (piece == null) continue;
 
             int value = 0;
-            switch (piece) {
-                case "♙": value = 10 + (int)pawnEval[r][c]; break;
-                case "♘": value = 30; break;
-                case "♗": value = 30; break;
-                case "♖": value = 50; break;
-                case "♕": value = 90; break;
-                case "♔": value = 900; break;
+            double positional = 0;
 
-                case "♟": value = -(10 + (int)pawnEval[7 - r][c]); break;
-                case "♞": value = -30; break;
-                case "♝": value = -30; break;
-                case "♜": value = -50; break;
-                case "♛": value = -90; break;
-                case "♚": value = -900; break;
+            switch (piece) {
+                case "♙":
+                    value = 10;
+                    positional = PAWN_TABLE[r][c];
+                    break;
+                case "♘":
+                    value = 30;
+                    positional = KNIGHT_TABLE[r][c];
+                    break;
+                case "♗":
+                    value = 30;
+                    positional = BISHOP_TABLE[r][c];
+                    break;
+                case "♖":
+                    value = 50;
+                    positional = ROOK_TABLE[r][c];
+                    break;
+                case "♕":
+                    value = 90;
+                    positional = QUEEN_TABLE[r][c];
+                    break;
+                case "♔":
+                    value = 900;
+                    positional = KING_TABLE[r][c];
+                    break;
+
+                case "♟":
+                    value = -10;
+                    positional = -PAWN_TABLE[7 - r][c];
+                    break;
+                case "♞":
+                    value = -30;
+                    positional = -KNIGHT_TABLE[7 - r][c];
+                    break;
+                case "♝":
+                    value = -30;
+                    positional = -BISHOP_TABLE[7 - r][c];
+                    break;
+                case "♜":
+                    value = -50;
+                    positional = -ROOK_TABLE[7 - r][c];
+                    break;
+                case "♛":
+                    value = -90;
+                    positional = -QUEEN_TABLE[7 - r][c];
+                    break;
+                case "♚":
+                    value = -900;
+                    positional = -KING_TABLE[7 - r][c];
+                    break;
             }
 
-            score += value;
+            score += value + (int) positional;
         }
     }
 
     return score;
 }
+
 
 
     public boolean isWhite(String piece) {

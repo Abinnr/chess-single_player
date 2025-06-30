@@ -54,6 +54,12 @@ public class ChessBot {
     public Move getBestMove(Board board, int depth, boolean maximizingPlayer) {
     ArrayList<Move> legalMoves = board.getAllLegalMoves();
 
+        legalMoves.sort((a, b) -> {
+    String capturedA = board.getPieceAt(a.toRow, a.toCol);
+    String capturedB = board.getPieceAt(b.toRow, b.toCol);
+    return board.pieceValue(capturedB) - board.pieceValue(capturedA);
+});
+
 
     
     Move bestMove = null;
