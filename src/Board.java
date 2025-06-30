@@ -87,11 +87,20 @@ public int pieceValue(String piece) {
     public Board makeMove(Move move) {
         Board newBoard = new Board(this);
 
+        
         newBoard.history.addAll(this.history);
         newBoard.history.add(move);
         String piece = newBoard.coins[move.fromRow][move.fromCol];
         newBoard.coins[move.toRow][move.toCol] = piece;
         newBoard.coins[move.fromRow][move.fromCol] = null;
+
+        // CHECK FOR POWN PROMOTION
+        if ("♙".equals(piece) && move.toRow == 0) {
+        newBoard.coins[move.toRow][move.toCol] = "♕"; // promote to white queen
+    } else if ("♟".equals(piece) && move.toRow == 7) {
+        newBoard.coins[move.toRow][move.toCol] = "♛"; // promote to black queen
+    }
+
         newBoard.isWhiteTurn = !newBoard.isWhiteTurn;
 
         return newBoard;
