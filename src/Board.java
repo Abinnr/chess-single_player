@@ -20,6 +20,25 @@ public class Board {
         this(other.coins, other.isWhiteTurn);
     }
 
+    public String getPieceAt(int row, int col) {
+    return coins[row][col];
+}
+
+public int pieceValue(String piece) {
+    if (piece == null) return 0;
+
+    switch (piece) {
+        case "♙": case "♟": return 10;
+        case "♘": case "♞": return 30;
+        case "♗": case "♝": return 30;
+        case "♖": case "♜": return 50;
+        case "♕": case "♛": return 90;
+        case "♔": case "♚": return 900;
+        default: return 0;
+    }
+}
+
+
     public List<Move> getAllLegalMoves(boolean forWhite) {
         List<Move> moves = new ArrayList<>();
 
