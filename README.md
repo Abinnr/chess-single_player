@@ -1,4 +1,4 @@
-# Chess Singleplayer Game (Java Swing)
+# Chess Singleplayer Engine (Java Swing)
 > Chess is the gymnasium of the mind. Keep building, keep growing. ♛
 
 ## Welcome to the Java-based Chess Singleplayer Game! ♟️ 
